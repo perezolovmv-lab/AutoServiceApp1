@@ -11,10 +11,11 @@
         Closing="Window_Closing">
 
     <Window.Resources>
-        <!-- Конвертер -->
+
+        <!-- Конвертер статусов -->
         <converters:StatusToTextConverter x:Key="StatusToTextConverter"/>
 
-        <!-- Стили кнопок -->
+        <!-- Стиль кнопок -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10,5"/>
@@ -44,7 +45,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Стиль для статусов -->
+        <!-- Стиль статусов -->
         <Style x:Key="StatusStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"/>
             <Style.Triggers>
@@ -59,19 +60,20 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
     </Window.Resources>
 
     <DockPanel>
+
         <!-- Меню -->
-        <Menu DockPanel.Dock="Top" Foreground="DarkBlue"
-              Height="27">
+        <Menu DockPanel.Dock="Top" Foreground="DarkBlue" Height="27">
             <MenuItem Header="Файл">
                 <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Справочники">
-                <MenuItem Header="Пользователи" Click="UsersMenuItem_Click" Style="{StaticResource SubMenuItemStyle}"/>
+                <MenuItem Header="Пользователи" Click="UsersMenuItem_Click"/>
             </MenuItem>
-            <MenuItem Header="Аналитика &#xD;&#xA;" Click="StatisticsMenuItem_Click" RenderTransformOrigin="0.509,0.502" Height="26"/>
+            <MenuItem Header="Аналитика" Click="StatisticsMenuItem_Click"/>
             <MenuItem Header="Справка">
                 <MenuItem Header="О программе" Click="AboutMenuItem_Click"/>
             </MenuItem>
@@ -82,14 +84,15 @@
             <ToolBar Background="#EEE7FF">
                 <Button Style="{StaticResource VioletButton}" Content="Добавить" Click="AddRequest_Click"/>
                 <Button Style="{StaticResource VioletButton}" Content="Редактировать" Click="EditRequest_Click"/>
-                <Button Style="{StaticResource VioletButton}" Content="Удалить" Click="DeleteRequest_Click" />
+                <Button Style="{StaticResource VioletButton}" Content="Удалить" Click="DeleteRequest_Click"/>
                 <Separator/>
                 <Button Style="{StaticResource VioletButton}" Content="Обновить" Click="Refresh_Click"/>
             </ToolBar>
         </ToolBarTray>
 
-        <!-- Основное содержимое -->
+        <!-- Основная сетка -->
         <Grid Margin="10">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -99,6 +102,7 @@
             <!-- Фильтры -->
             <Border BorderBrush="#B0BEC5" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0 0 0 10" Background="White">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
                     <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="5" Foreground="#333"/>
                     <TextBox x:Name="SearchTextBox" Width="250" Margin="5"
                              TextChanged="SearchTextBox_TextChanged" 
@@ -108,43 +112,53 @@
                     <ComboBox x:Name="StatusFilter" Width="150" Margin="5"
                               SelectionChanged="StatusFilter_SelectionChanged"/>
 
-                    <Button Content="Сброс" Width="80" Height="28" Margin="15,0,0,0"
+                    <Button Content="Сброс"
+                            Width="80" Height="28" Margin="15,0,0,0"
                             Style="{StaticResource VioletButton}"
-                            Background="#F44336"/>
+                            Background="#F44336"
+                            Click="ResetFilters_Click"/>
+
                 </StackPanel>
             </Border>
 
-            <!-- Таблица заявок -->
-            <DataGrid x:Name="RequestsGrid" AutoGenerateColumns="False" 
-                      Grid.Row="1" 
+            <!-- Таблица -->
+            <DataGrid x:Name="RequestsGrid"
+                      AutoGenerateColumns="False"
+                      Grid.Row="1"
                       Margin="0,0,0,10"
                       SelectionMode="Single"
                       IsReadOnly="True"
+                      CanUserSortColumns="False"
                       GridLinesVisibility="Horizontal"
                       AlternatingRowBackground="#F1F8E9"
                       RowBackground="White"
                       RowHeight="35"
                       FontSize="14"
-                      SelectionChanged="RequestsGrid_SelectionChanged"
-                      MouseDoubleClick="RequestsGrid_MouseDoubleClick"
                       BorderBrush="#B0BEC5"
-                      BorderThickness="1">
+                      BorderThickness="1"
+                      SelectionChanged="RequestsGrid_SelectionChanged"
+                      MouseDoubleClick="RequestsGrid_MouseDoubleClick">
 
                 <DataGrid.Columns>
+
                     <DataGridTextColumn Header="№" Binding="{Binding Id}" Width="50"/>
-                    <DataGridTextColumn Header="Дата" Binding="{Binding CreatedDate, StringFormat=dd.MM.yyyy HH:mm}" Width="140"/>
+
+                    <DataGridTextColumn Header="Дата"
+                                        Binding="{Binding CreatedDate, StringFormat=dd.MM.yyyy HH:mm}"
+                                        Width="140"
+                                        SortMemberPath="CreatedDate"/>
+
                     <DataGridTextColumn Header="Марка" Binding="{Binding CarBrand}" Width="100"/>
                     <DataGridTextColumn Header="Модель" Binding="{Binding CarModel}" Width="100"/>
                     <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="160"/>
                     <DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}" Width="130"/>
 
-                    <!-- Красивый статус -->
                     <DataGridTemplateColumn Header="Статус" Width="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Padding="5" CornerRadius="4" 
+                                <Border Padding="5" CornerRadius="4"
                                         Background="{Binding Status, Converter={StaticResource StatusToTextConverter}, ConverterParameter=Color}">
-                                    <TextBlock Text="{Binding Status, Converter={StaticResource StatusToTextConverter}}" 
+                                    <TextBlock Text="{Binding Status, Converter={StaticResource StatusToTextConverter}}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Foreground="Black"
@@ -155,7 +169,9 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Проблема" Binding="{Binding ProblemDescription}" Width="*"/>
+
                 </DataGrid.Columns>
+
             </DataGrid>
 
             <!-- Статус-бар -->
@@ -176,6 +192,9 @@
                     <TextBlock x:Name="DateTimeText" Margin="5,0"/>
                 </StatusBarItem>
             </StatusBar>
+
         </Grid>
+
     </DockPanel>
+
 </Window>

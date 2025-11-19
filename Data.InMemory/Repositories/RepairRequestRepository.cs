@@ -82,6 +82,57 @@ namespace Data.InMemory.Repositories
             return _requests.FirstOrDefault(r => r.Id == id);
         }
 
+        
+
+        public bool Update(RepairRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var existing = GetById(request.Id);
+            if (existing == null)
+                return false;
+
+            existing.CarBrand = request.CarBrand;
+            existing.CarModel = request.CarModel;
+            existing.ProblemDescription = request.ProblemDescription;
+            existing.ClientName = request.ClientName;
+            existing.PhoneNumber = request.PhoneNumber;
+            existing.Status = request.Status;
+
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
+            var request = GetById(id);
+            return request != null && _requests.Remove(request);
+        }
+
+
+        private void SeedRandomRequests(int count)
+        {
+            var brands = new[] { "Toyota", "BMW", "Audi", "Ford", "Kia", "Hyundai", "Volkswagen", "Nissan" };
+            var models = new[] { "Corolla", "X5", "A4", "Focus", "Rio", "Elantra", "Golf", "Qashqai" };
+            var names = new[] { "Иван Петров", "Сергей Смирнов", "Анна Волкова", "Мария Иванова", "Дмитрий Кузнецов", "Ольга Соколова" };
+            var problems = new[] { "Диагностика двигателя", "Замена масла", "Ремонт подвески", "Тормозная система", "Шиномонтаж", "Электрика" };
+            var rnd = new Random();
+
+            for (int i = 0; i < count; i++)
+            {
+                var request = new RepairRequest
+                {
+                    CarBrand = brands[rnd.Next(brands.Length)],
+                    CarModel = models[rnd.Next(models.Length)],
+                    ProblemDescription = problems[rnd.Next(problems.Length)],
+                    ClientName = names[rnd.Next(names.Length)],
+                    PhoneNumber = $"+7 (9{rnd.Next(10, 99)}) {rnd.Next(100, 999)}-{rnd.Next(10, 99)}-{rnd.Next(10, 99)}",
+                    Status = (RequestStatus)rnd.Next(0, 3),
+                    CreatedDate = DateTime.Now.AddDays(-rnd.Next(0, 90))
+                };
+                Add(request);
+            }
+        }
         public List<RepairRequest> GetAll(RepairRequestsFilter filter)
         {
             var query = _requests.AsEnumerable();
@@ -109,58 +160,12 @@ namespace Data.InMemory.Repositories
                     query = query.Where(r => DateOnly.FromDateTime(r.CreatedDate) <= filter.EndDate.Value);
             }
 
+            // ВАЖНО: сортировка по дате
             return query
-                .OrderByDescending(r => r.CreatedDate)
+                .OrderByDescending(r => r.CreatedDate)   // новые сверху
+                .ThenBy(r => r.Id)                       // при равной дате по номеру
                 .ToList();
         }
 
-        public bool Update(RepairRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
-            var existing = GetById(request.Id);
-            if (existing == null)
-                return false;
-
-            existing.CarBrand = request.CarBrand;
-            existing.CarModel = request.CarModel;
-            existing.ProblemDescription = request.ProblemDescription;
-            existing.ClientName = request.ClientName;
-            existing.PhoneNumber = request.PhoneNumber;
-            existing.Status = request.Status;
-
-            return true;
-        }
-
-        public bool Delete(int id)
-        {
-            var request = GetById(id);
-            return request != null && _requests.Remove(request);
-        }
-    
-
-        private void SeedRandomRequests(int count)
-        {
-            var brands = new[] { "Toyota", "BMW", "Audi", "Ford", "Kia", "Hyundai", "Volkswagen", "Nissan" };
-            var models = new[] { "Corolla", "X5", "A4", "Focus", "Rio", "Elantra", "Golf", "Qashqai" };
-            var names = new[] { "Иван Петров", "Сергей Смирнов", "Анна Волкова", "Мария Иванова", "Дмитрий Кузнецов", "Ольга Соколова" };
-            var problems = new[] { "Диагностика двигателя", "Замена масла", "Ремонт подвески", "Тормозная система", "Шиномонтаж", "Электрика" };
-            var rnd = new Random();
-
-            for (int i = 0; i < count; i++)
-            {
-                var request = new RepairRequest
-                {
-                    CarBrand = brands[rnd.Next(brands.Length)],
-                    CarModel = models[rnd.Next(models.Length)],
-                    ProblemDescription = problems[rnd.Next(problems.Length)],
-                    ClientName = names[rnd.Next(names.Length)],
-                    PhoneNumber = $"+7 (9{rnd.Next(10, 99)}) {rnd.Next(100, 999)}-{rnd.Next(10, 99)}-{rnd.Next(10, 99)}",
-                    Status = (RequestStatus)rnd.Next(0, 3),
-                    CreatedDate = DateTime.Now.AddDays(-rnd.Next(0, 90))
-                };
-                Add(request);
-            }
-        }
-    } }
+    }
+}
