@@ -1,0 +1,82 @@
+﻿<Application x:Class="AutoServiceApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnMainWindowClose">
+    
+
+    <Application.Resources>
+        <!-- Violet theme brushes -->
+        <SolidColorBrush x:Key="PrimaryViolet" Color="#7C4DFF"/>
+        <SolidColorBrush x:Key="PrimaryVioletDark" Color="#5E35B1"/>
+        <SolidColorBrush x:Key="AccentViolet" Color="#B388FF"/>
+        <SolidColorBrush x:Key="BgLight" Color="#F6F3FF"/>
+        <SolidColorBrush x:Key="FgPrimary" Color="#2B2B2B"/>
+        <SolidColorBrush x:Key="FgOnPrimary" Color="White"/>
+
+        <!-- Button style -->
+        <Style x:Key="VioletButton" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource FgOnPrimary}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryViolet}"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryVioletDark}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8,4"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource PrimaryVioletDark}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataGrid header/row styling -->
+        <Style TargetType="DataGrid">
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="#F0E9FF"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E0D7FF"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#E0D7FF"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource PrimaryViolet}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryVioletDark}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style TargetType="Menu">
+            <Setter Property="Background" Value="{StaticResource PrimaryViolet}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+        <Style TargetType="ToolBar">
+            <Setter Property="Background" Value="#EEE7FF"/>
+        </Style>
+      <!-- Submenu item style: dark text on light background -->
+        <Style x:Key="SubMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="{StaticResource FgPrimary}"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <!-- ComboBox item and popup text -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Foreground" Value="{StaticResource FgPrimary}"/>
+        </Style>
+    </Application.Resources>
+    
+</Application>
